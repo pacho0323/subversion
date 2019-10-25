@@ -1,0 +1,997 @@
+﻿/// <var>The sura commons utilities</var>
+var SURACommons = {
+
+    // last Scroll Top
+    scrollTop: 0,
+
+    // load home initial control
+    initControls: function initControls() {
+        $(document).ready(function () {
+
+            SURACommons.loadDirectAccess();
+            SURACommons.loadDynamicLinks();
+            SURACommons.modifyStructure();
+            SURACommons.loadApplicattions();
+            SURACommons.loadBanners();
+            SURACommons.checkCurrentJS();
+            SURACommons.goingDownButton();
+            SURACommons.suraPopUp();
+            SURACommons.hideHeaderWithScroll();
+            SURACommons.getCurrentUserInfo(SURACommons.loadUserInformationInHome);
+            SURACommons.loadNavLef();
+            SURACommons.showBigPicture();
+            SURACommons.loadPorChat();
+            SURACommons.changeErrorMsg();
+			// SURACommons.ReadCookieUpdatePersonalInformation();
+			
+
+        });
+    },
+
+    // Set current user in DOM object
+    setCurrentUserName: function (elementId) {
+        var requestUri = _spPageContextInfo.webAbsoluteUrl + "/_api/SP.UserProfiles.PeopleManager/GetMyProperties";
+        var requestHeaders = { "accept": "application/json;odata=verbose" };
+
+        $.ajax({
+            url: requestUri,
+            contentType: "application/json;odata=verbose",
+            headers: requestHeaders,
+            success: currentUserSuccess,
+            error: currentUserError
+        });
+
+        function currentUserSuccess(data, request) {
+            $("#" + elementId).text(data.d.DisplayName);
+        }
+
+        function currentUserError(error) {
+            $("#" + elementId).text('');
+        }
+    },
+
+    // Return current user information to call back function
+    getCurrentUserInfo: function (callback) {
+        var requestUri = _spPageContextInfo.webAbsoluteUrl + "/_api/SP.UserProfiles.PeopleManager/GetMyProperties";
+        var requestHeaders = { "accept": "application/json;odata=verbose" };
+
+        $.ajax({
+            url: requestUri,
+            contentType: "application/json;odata=verbose",
+            headers: requestHeaders,
+        }).done(currentUserSuccess)
+            .fail(currentUserError)
+
+        function currentUserSuccess(data, request) {
+            callback(data.d);
+        }
+
+        function currentUserError(error) {
+            callback('');
+        }
+    },
+
+    // Set default company 
+    resetHome: function () {
+        var web = _spPageContextInfo.webServerRelativeUrl;
+        var page = _spPageContextInfo.serverRequestPath;
+
+        if (web === "/" && page.toLowerCase() === "/paginas/default.aspx") {
+            localStorage.setItem("companyTitle", "Corporativo");
+            localStorage.setItem("companyUrl", "/");
+        }
+    },
+
+    // Hide some sharepoint controls in master page
+    hideOptions: function () {
+        $("#suiteLinksBox").css("visibility", "hidden");
+        //$(".ms-cui-topBar2").css("visibility", "hidden");
+        $("#RibbonContainer-TabRowRight").css("visibility", "hidden");
+
+        $("#s4-ribbonrow").css("height", "0px");
+        //$("#globalNavBox").css("height", "0px");
+
+        $(".ms-core-brandingText").text("");
+    },
+
+    // Set custom styles in principal nav manu
+    applyMenuStyle: function () {
+        var liList = $("#main-nav ul li[class='static']");
+        var ids = ["negocio", "gente", "comunidades", "negocio", "gente", "comunidades"];
+
+        liList.each(function (index, item) {
+            if (index <= liList.length) {
+                $(item).attr("id", ids[index]);
+            }
+        });
+
+        liList.each(function () {
+            $("#" + this.id + " a").on("mouseover", function () {
+                $("#main-nav-footer").css("background-color", $(this).css("background-color"));
+            });
+            $("#" + this.id + " a").on("mouseleave", function () {
+                $("#main-nav-footer").css("background-color", "lightgray");
+            });
+
+        });
+    },
+
+    // Set custom params in mail structure
+    getMailStructure: function (path, owaUrl, template) {
+        SP.SOD.registerSod("sura.ShareDocsResource.es-es", "/_layouts/15/ScriptResx.ashx?name=SURA/ShareDocsResource&culture=es-es");
+        SP.SOD.executeFunc("sura.ShareDocsResource.es-es", 'Res', function () {
+
+            var format = "mailto:?subject={0}&body={1}{2}";
+            var subject = encodeURIComponent(template === "Conectados" ? Res.asuntoMensajeConectados : Res.asuntoMensaje);
+            var intro = encodeURIComponent(template === "Conectados" ? Res.plantillaContenidoConectados : Res.plantillaContenido);
+            var open = encodeURIComponent("\n\nIr al enlace: \n <" + path + "> \n");
+            var owa = encodeURIComponent("Abrir en la web: \n <" + owaUrl + "> \n");
+
+            format = format.replace("{0}", subject);
+            format = format.replace("{1}", intro);
+            format = format.replace("{2}", open + (owaUrl ? owa : ""));
+
+            location.href = format;
+
+        });
+    },
+
+    openNav: function () {
+        var control = document.querySelector(".nav-left");
+        if (control) control.style.marginLeft = "0";
+    },
+
+    closeNav: function closeNav() {
+        var control = document.querySelector(".nav-left");
+        if (control) control.style.marginLeft = "-250px";
+    },
+
+    // get items count for many name lists
+    getItemsCountByListName: function getItemsCountByListName(listName, callback) {
+        var clientContext = new SP.ClientContext();
+        var list = clientContext.get_web().get_lists().getByTitle(listName);
+
+        clientContext.load(list);
+        clientContext.executeQueryAsync(
+            Function.createDelegate(this, function () {
+                var length = list.get_itemCount();
+
+                callback(length);
+            }),
+            Function.createDelegate(this, function () { })
+        );
+    },
+
+    // Return items count inside a list by listName
+    getItemsCount: function getItemsCount(listName, id) {
+        var clientContext = new SP.ClientContext();
+        var oList = clientContext.get_web().get_lists().getByTitle(listName);
+
+        clientContext.load(oList);
+        clientContext.executeQueryAsync(
+            Function.createDelegate(this, function () { document.getElementById(id).innerText = "" + oList.get_itemCount(); }),
+            Function.createDelegate(this, function () { })
+        );
+    },
+
+    // Return files count inside a list by listUrl
+    getFilesCount: function getFilesCount(url, id) {
+        var clientContext = new SP.ClientContext();
+        var files = clientContext.get_web().getFolderByServerRelativeUrl(url).get_files();
+
+        clientContext.load(files);
+        clientContext.executeQueryAsync(
+            Function.createDelegate(this, function () { document.getElementById(id).innerText = "" + files.get_count(); }),
+            Function.createDelegate(this, function () { })
+        );
+    },
+
+    // Return files count inside a list by list name
+    getFilesCountByListName: function getFilesCount(listName, id) {
+        var clientContext = new SP.ClientContext();
+        var query = SP.CamlQuery.createAllItemsQuery();
+        var list = clientContext.get_web().get_lists().getByTitle(listName);
+        var files = list.getItems(query);
+
+        clientContext.load(files);
+        clientContext.executeQueryAsync(
+            Function.createDelegate(this, function () {
+                var count = 0;
+                var length = files.get_count();
+                for (var i = 0; i < length; i++) {
+                    if (files["itemAt"](i)["$5_0"]["$H_0"].FileSystemObjectType === 0)
+                        count++;
+                }
+
+                document.getElementById(id).innerText = "" + count;
+            }),
+            Function.createDelegate(this, function () { })
+        );
+    },
+
+    // Show a callout with user name inside a control by id
+    calloutById: function caloutInfo(controlId, title, content) {
+        if (!controlId) return;
+
+        SP.SOD.executeFunc("callout.js", "Callout", function () {
+            var calloutPageElement = document.getElementById(controlId);
+            var callout = CalloutManager.createNew({
+                ID: controlId + "-callout",
+                launchPoint: calloutPageElement,
+                title: title,
+                content: content,
+                openOptions: { event: "hover" }
+            });
+        });
+    },
+
+    // Show a callout with user information inside a js control
+    calloutByObject: function calloutByObject(control, title, content, url, isModal) {
+        if (!control) return;
+
+        SP.SOD.executeFunc("callout.js", "Callout", function () {
+            var callout = CalloutManager.createNew({
+                ID: control.id + "-callout",
+                launchPoint: control,
+                title: title,
+                content: content,
+                contentWidth: 350,
+                openOptions: { event: "hover" }
+            });
+
+            var calloutAction = new CalloutAction({
+                text: "Actualizar información",
+                onClickCallback: function () {
+                    if (isModal) {
+                        OpenPopUpPageWithTitle(url, null, null, null, "Informativo");
+                    } else {
+                        window.open(url);
+                    }
+                }
+            });
+
+            callout.addAction(calloutAction);
+        });
+    },
+
+    getQuerystringValue: function getQuerystringValue(name, keepLetter) {
+		name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]").toLocaleLowerCase();
+
+        var searchText = keepLetter ? location.search : location.search.toLocaleLowerCase();
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(searchText);
+        return results === null ? "" : results[1].replace(/\+/g, " ");
+    },
+
+    loadNavLef: function () {
+        SURACommons.closeNav();
+
+        $('html').click(function () {
+            SURACommons.closeNav();
+        });
+
+        $('.nav-left').click(function (event) {
+            event.stopPropagation();
+        });
+
+        $('.nav-icon').click(function (event) {
+            event.stopPropagation();
+        });
+    },
+
+    modifyStructure: function () {
+        if (!navigator.userAgent.match(/msie 8/i)) {
+            if ($.material) $.material.init();
+            else if (typeof $j !== "undefined") if ($j.material) $j.material.init();
+        }
+
+        $("#suiteLinksBox ul li a[href*='_layout']").css("display", "none");
+
+        $(".ms-comm-membersList a img.ms-peopleux-userImg").each(function (i, item) {
+            var src = $(this).attr("src");
+            src = src.replace("_SThumb", "_LThumb");
+            $(this).attr("src", src);
+        });
+
+        if (location.search.toLocaleLowerCase().indexOf("isdlg") > 0) {
+            $("#tp-header").hide();
+            $("#tp-navbar").hide();
+            $(".tp-breadcrumb").hide();
+            $("header").hide();
+            $("footer").hide();
+            $("#ms-designer-ribbon").hide();
+            $("#open-button").hide();
+            $("section.site-menu").hide();
+            $(".chat").hide();
+        }
+    },
+
+    loadUserInformationInHome: function (data) {
+        if (!data) return;
+
+        var name = data.DisplayName || "";
+        var picture = data.PictureUrl || "";
+        var title = data.Title || "";
+        var loc = $.grep(data.UserProfileProperties.results, function (item, i) { return item.Key === "Office"; });
+        var ext = $.grep(data.UserProfileProperties.results, function (item, i) {
+            return item.Key === "WorkPhone" || item.Key === "HomePhone"; });
+        var url = "/_layouts/15/profile/update.aspx?IsDlg=1" || "";
+        var image = '<div style="display:inline"><span style="display: inline-block;position: relative; ' +
+            'width: 31px; height: 31px;"><img id="userImage" class="" style="width: 31px;height: 31px; ' +
+            'min-width: 31px; min-height: 31px;position:absolute" src="' + picture +
+            '" alt="' + name + '"><span></span></span></div>';
+
+        loc = loc.length > 0 ? loc[0] : "";
+        ext = ext.length > 0 ? ext[0].Value ? ext[0] : ext[1] : "";
+
+        $("#suiteBarRight").prepend(image);
+
+        var calloutContent = "<div class='col-md-6'><img style='width:80%' src=" + picture +
+            " alt=" + name + "></div><div class='col-md-6'>" +
+            "<h6>" + name + "</h6><small>" + title + "</small><div>" +
+            (loc ? loc.Value : "") + "</div><div>Ext: " + (ext ? ext.Value : "") + "</div></div>";
+        SURACommons.calloutByObject($("#userImage")[0], "", calloutContent, url, true);
+    },
+
+    checkCurrentJS: function checkCurrentJS() {
+
+        if (!_spPageContextInfo.webAbsoluteUrl) return;
+
+        ExecuteOrDelayUntilScriptLoaded(checkJS, "sp.js");
+
+        function checkJS() {
+            var url = (_spPageContextInfo.webServerRelativeUrl + "/Style Library/js/inicio.js").replace("//", "/");
+            var clientContext = SP.ClientContext.get_current();
+            var oweb = clientContext.get_web();
+            var ofile = oweb.getFileByServerRelativeUrl(url);
+            clientContext.load(ofile);
+            clientContext.executeQueryAsync(
+                Function.createDelegate(this, function () {
+
+                    SURACommons.getScript(url, function () {
+                        if (typeof (CurrentSite) !== "undefined") CurrentSite.init();
+                    });
+                }),
+                Function.createDelegate(this, function (sender, args) { console.log(args.get_message()); })
+            );
+        }
+    },
+
+    getScript: function getScript(url, success) {
+
+        var script = document.createElement('script');
+        script.src = url;
+
+        var head = document.getElementsByTagName('head')[0],
+            done = false;
+
+        script.onload = script.onreadystatechange = function () {
+
+            if (!done && (!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete')) {
+
+                done = true;
+
+                success();
+
+                script.onload = script.onreadystatechange = null;
+                head.removeChild(script);
+
+            };
+
+        };
+
+        head.appendChild(script);
+
+    },
+
+    loadDirectAccess: function () {
+        if ($(".menu-others ul")) {
+            SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function () {
+
+                var query = "<Query><OrderBy><FieldRef Name='OrdenEnlace' Ascending='True' /></OrderBy></Query>";
+                var clientContext = new SP.ClientContext("/");
+                var oList = clientContext.get_web().get_lists().getByTitle('Enlaces SURA');
+
+                var camlQuery = new SP.CamlQuery();
+                camlQuery.set_viewXml('<View>' + query + '<RowLimit>10</RowLimit></View>');
+                this.suraLinks = oList.getItems(camlQuery);
+
+                clientContext.load(this.suraLinks);
+                clientContext.executeQueryAsync(
+                    Function.createDelegate(this, linksSuccess),
+                    Function.createDelegate(this, linksFail)
+                );
+
+                function linksSuccess(sender, args) {
+                    var listItemEnumerator = this.suraLinks.getEnumerator();
+                    var divHtml = '';
+
+                    while (listItemEnumerator.moveNext()) {
+                        var oListItem = listItemEnumerator.get_current();
+                        var title = oListItem.get_item('Title');
+                        var url = oListItem.get_item('URL').get_url();
+                        var icon = oListItem.get_item('ClaseIcono');
+                        var color = oListItem.get_item('ColorFondo');
+
+                        var iconFormat = '<i class="' + icon + '"></i>';
+                        divHtml += '<li><a style="background-color:' + color + '" target="_blank" title="' + title +
+                            '" href="' + url + '" data-toggle="tooltip">' + iconFormat + '</a></li> ';
+                    }
+
+                    $(".menu-others ul").empty();
+                    $(".menu-others ul").html(divHtml);
+                    $(".menu-others ul li a").tooltip({ placement: "bottom" });
+                    SURACommons.loadAccessDirectNotifications();
+                }
+
+                function linksFail(sender, args) {
+                    $(".menu-others").hide();
+                }
+
+            });
+        }
+    },
+
+    loadAccessDirectNotifications: function () {
+        $(".menu-others .dropdown-menu li a").each(function (i, item) {
+            var a = $(item);
+            var title = $(item).attr("data-original-title");
+
+            if (!title) title = $(item).attr("title");
+
+            if (title) {
+                if (title.indexOf("Entéranet") > 0) {
+                    var date = new Date();
+
+                    if (!SURACommons.getCookie("enteranet")) {
+                        var query = "<Query><Where><DateRangesOverlap><FieldRef Name='FechaPublicacion' />" +
+                            "<FieldRef Name='FechaPublicacion' />" +
+                            "<Value Type='DateTime'><Week /></Value></DateRangesOverlap></Where></Query>";
+                        SURACommons.getListItems("/sites/prensa", "Boletines", query, 1, function (items) {
+                            if (items.$2K_0 > 0) {
+                                items.moveNext();
+                                var oListItem = items.get_current();
+                                var visible = oListItem.get_item('EsVisible');
+
+                                if (visible) {
+                                    date.setDate(date.getDate() + 3);
+                                    a.append('<span class="button__badge">!</span>');
+                                    a.on("click", function () {
+                                        $(this).find(".button__badge").remove();
+                                        document.cookie = "enteranet=week;expires=" + date + ";domain=somossura.com;path=/";
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+
+        });
+    },
+
+    loadDynamicLinks: function loadDynamicLinks() {
+        if ($("#DeltaSuiteLinks #suiteLinksBox ul")) {
+            SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function () {
+
+                var query = "<Query><OrderBy><FieldRef Name='OrdenEnlace' Ascending='True' /></OrderBy></Query>";
+                var clientContext = new SP.ClientContext("/");
+                var projectList = clientContext.get_web().get_lists().getByTitle('Proyectos SURA');
+                var companiesLink = clientContext.get_web().get_lists().getByTitle('Compañias Home');
+
+                var camlQuery = new SP.CamlQuery();
+                camlQuery.set_viewXml('<View>' + query + '<RowLimit>20</RowLimit></View>');
+                projectLinks = projectList.getItems(camlQuery);
+                companiesLinks = companiesLink.getItems(camlQuery);
+
+                clientContext.load(projectLinks);
+                clientContext.load(companiesLinks);
+                clientContext.executeQueryAsync(
+                    Function.createDelegate(this, dynamicSuccess),
+                    Function.createDelegate(this, dynamicFail)
+                );
+
+                function dynamicSuccess(sender, args) {
+                    var projectsListItem = projectLinks.getEnumerator();
+                    var companiesListItem = companiesLinks.getEnumerator();
+                    var ul = $("#DeltaSuiteLinks #suiteLinksBox ul");
+
+                    if (ul.length === 0) {
+                        var aux = $("#DeltaSuiteLinks #suiteLinksBox");
+                        aux.append("<ul class='ms-core-suiteLinkList'><li class='ms-core-suiteLink'><a class='ms-core-suiteLink-a'><span></span></a></li></ul>");
+                        ul = $("#DeltaSuiteLinks #suiteLinksBox ul");
+                    }
+
+                    var lis = $("#DeltaSuiteLinks #suiteLinksBox ul li");
+                    var template = $(lis[0]);
+
+                    while (projectsListItem.moveNext()) {
+                        var oListItem = projectsListItem.get_current();
+                        var title = oListItem.get_item('Title');
+                        var url = oListItem.get_item('URL').get_url();
+                        var icon = oListItem.get_item('ClaseIcono');
+                        var color = oListItem.get_item('ColorFondo');
+                        var cat = oListItem.get_item('TipoProyecto');
+
+                        var liList = $("#DeltaSuiteLinks #suiteLinksBox > ul > li > a > span");
+                        var li = $.grep(liList, function (item, i) { return item.innerText === cat; });
+
+                        if (li.length === 0) {
+                            var liProjects = template.clone();
+                            liProjects.addClass("projects");
+                            liProjects.append("<ul class='projectList dropdown-menu'></ul>");
+                            liProjects.find("a").attr("href", "#").attr("data-toggle", "dropdown").attr("aria-expanded", "false");
+                            liProjects.find("a").addClass("dropdown-toggle");
+                            liProjects.find("span").text(cat);
+                            ul.prepend(liProjects);
+
+                            liList = $("#DeltaSuiteLinks #suiteLinksBox > ul > li > a > span");
+                            li = $.grep(liList, function (item, i) { return item.innerText === cat; });
+                        } 
+
+                        var textValue = '<i class="' + icon + '"></i><span>' + title + '</span>';
+                        var divHtml = '<li><a title="' + title + '" href="' + url + '">' + textValue + '</a></li> ';
+
+                        var currentUl = $(li[0]).parent().parent();
+                        currentUl.find("ul").append(divHtml);                        
+                    }                    
+
+                    while (companiesListItem.moveNext()) {
+                        oListItem = companiesListItem.get_current();
+                        title = oListItem.get_item('Title');
+                        url = oListItem.get_item('Url').get_url();
+
+                        liList = $("#DeltaSuiteLinks #suiteLinksBox > ul > li > a > span");
+                        li = $.grep(liList, function (item, i) { return item.innerText === "Compañías"; });
+
+                        if (li.length === 0) {
+                            var licompanies = template.clone();
+                            licompanies.addClass("companies");
+                            licompanies.append("<ul class='projectList dropdown-menu'></ul>");
+                            licompanies.find("a").attr("href", "#").attr("data-toggle", "dropdown").attr("aria-expanded", "false");
+                            licompanies.find("a").addClass("dropdown-toggle");
+                            licompanies.find("span").text("Compañías");
+                            ul.prepend(licompanies);
+
+                            liList = $("#DeltaSuiteLinks #suiteLinksBox > ul > li > a > span");
+                            li = $.grep(liList, function (item, i) { return item.innerText === "Compañías"; });
+                        }
+
+                        divHtml = '<li><a href="' + url + '"><span>' + title + '</span></a></li> ';
+                        currentUl = $(li[0]).parent().parent();
+                        currentUl.find("ul").append(divHtml);  
+                    }
+
+                    $("#ss-header .menu-corp-mobile a.dropdown-toggle").on("click", function (event) {
+                        var company = $(".companies");
+
+                        if (company.hasClass("open")) {
+                            company.removeClass("open");
+                        }
+                        else {
+                            company.addClass("open");
+                        }
+
+                        event.stopPropagation();
+                    });
+                }
+
+                function dynamicFail(sender, args) {
+                    console.log("error: " + args.get_message());
+                }
+            });
+        }
+    },
+
+    loadJQuery: function loadJQuery(callback) {
+
+        if (typeof jQuery === 'undefined') {
+
+            if (typeof $ === 'function') {
+                thisPageUsingOtherJSLibrary = true;
+            }
+
+            SURACommons.getScript('/Style Library/js/jquery.min.js', function () {
+
+                if (typeof jQuery === 'undefined') {
+
+                    alert("ocurriÃ³ un problema, refresca la pÃ¡gina por favor.");
+
+                } else {
+
+                    callback();
+
+                }
+
+            });
+
+        } else {
+
+            callback();
+
+        };
+    },
+
+    loadApplicattions: function () {
+        SURACommons.getScript('/Style Library/AplicacionesSura/js/applications.js', function () {
+
+            SP.SOD.executeFunc("sp.js", 'SP.ClientContext', Sura.Applications.init);
+
+        });
+    },
+
+    loadBanners: function () {
+        SURACommons.getScript('/Style Library/BannerRotatorio/js/banners.js', function () {
+
+            SP.SOD.executeFunc("sp.js", 'SP.ClientContext', Sura.Slider.init);
+
+        });
+    },
+
+    loadPorChat: function () {
+        if (location.search.toLocaleLowerCase().indexOf("isdlg") > 0) return;
+
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://pratech-chatbot-vista-sura-pdn.mybluemix.net/sara/js/chat-box.js';
+        //script.src = '/Style%20Library/js/chat-box.js';
+        document.getElementsByTagName('head')[0].appendChild(script);
+
+        var body = '<a href="javascript:" class="chat"><input type="hidden" id="seusToken" name="seusToken" value=""></a>';
+        $("body").append(body);
+
+        var token = SURACommons.getCookie("SeusToken");
+        $(".chat input#seusToken").val(token);
+    },
+
+    paintRatingStars: {
+        load: function () {
+            $(document).ready(function () {
+                var controls = $(".rating-control");
+                controls.each(function (i, control) {
+
+                    var ratingContent = '<span>â˜†</span><span>â˜†</span><span>â˜†</span><span>â˜†</span><span>â˜†</span>' +
+                        '<input id="starValue" type="hidden" value="0">';
+
+                    $(control).html(ratingContent);
+
+                    var stars = $(control).find("span");
+                    stars.each(function (j, item) {
+                        var star = $(item);
+                        star.attr("value", 5 - j);
+                        star.on("click", SURACommons.paintRatingStars.setValue);
+                    });
+                });
+            });
+        },
+
+        setValue: function () {
+            var current = $(this);
+            var stars = current.parent().find("span");
+            stars.each(function (i, item) {
+                var star = $(item);
+
+                if (Number(star.attr("value") <= Number(current.attr("value")))) {
+                    star.addClass("selected");
+                }
+                else {
+                    star.removeClass("selected");
+                }
+            });
+
+            var value = current.parent().find("input#starValue");
+            value.val(Number(current.attr("value")));
+        }
+    },
+
+    goingDownButton: function goingDownButton() {
+        setTimeout(function () {
+            $('.going-down-button').click(function () {
+                if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname) {
+
+                    var target = $(this.hash);
+                    target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                    if (target.length) {
+                        $('#s4-workspace').animate({
+                            scrollTop: target.offset().top + $('#s4-workspace').scrollTop() - 100
+                        }, 1000);
+                        return false;
+                    }
+                }
+            });
+        }, 1000);
+    },
+
+    suraPopUp: function () {
+        $('.sura-popup').click(function () {
+            var control = $(this);
+            var href = control.attr("href");
+
+            OpenPopUpPageWithTitle(href, null, null, null, 'Somos SURA');
+            return false;
+        });
+    },
+
+    hideHeaderWithScroll: function () {
+        $("#s4-workspace").scroll(function () {
+            var scrollTop = $(this).scrollTop();
+            var isVisible = $("header").is(":visible");
+
+            if (scrollTop > SURACommons.scrollTop && isVisible) {
+                //$("header").slideUp("fast");
+            }
+
+            if (scrollTop < SURACommons.scrollTop && !isVisible) {
+                //$("header").slideDown("fast");
+            }
+
+            SURACommons.scrollTop = scrollTop;
+        });
+    },
+
+    isCurrentUserMemberOfGroup: function (groupName, OnComplete) {
+        var currentContext = new SP.ClientContext.get_current();
+        var currentWeb = currentContext.get_web();
+
+        var currentUser = currentContext.get_web().get_currentUser();
+        currentContext.load(currentUser);
+
+        var allGroups = currentWeb.get_siteGroups();
+        currentContext.load(allGroups);
+
+        var group = allGroups.getByName(groupName);
+        currentContext.load(group);
+
+        var groupUsers = group.get_users();
+        currentContext.load(groupUsers);
+
+        currentContext.executeQueryAsync(OnSuccess, OnFailure);
+
+        function OnSuccess(sender, args) {
+            var userInGroup = false;
+            var groupUserEnumerator = groupUsers.getEnumerator();
+            while (groupUserEnumerator.moveNext()) {
+                var groupUser = groupUserEnumerator.get_current();
+                if (groupUser.get_id() === currentUser.get_id()) {
+                    userInGroup = true;
+                    break;
+                }
+            }
+            OnComplete(userInGroup);
+        }
+
+        function OnFailure(sender, args) {
+            OnComplete(false);
+        }
+    },
+
+    countUp: function () {
+        $('.sura-counterUp').each(function () {
+            var $this = $(this);
+            var countTo = $this.attr('data-count');
+
+            $({ countNum: $this.text() }).animate({
+                countNum: countTo
+            },
+
+                {
+                    duration: 3000,
+                    easing: 'linear',
+                    step: function () {
+                        $this.text(Math.floor(this.countNum));
+                    },
+                    complete: function () {
+                        $this.text(this.countNum);
+                    }
+
+                });
+        });
+    },
+
+    getCookie: function (name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length === 2) return parts.pop().split(";").shift();
+    },
+
+    getResourceValues: function (resourceName, language) {
+        var d = $.Deferred();
+
+        jQuery.getScript("/_layouts/scriptresx.ashx?culture=" + language +
+            "&name=" + resourceName)
+            .done(function () {
+                d.resolve(Res);
+            })
+            .fail(function () {
+                d.reject({});
+            });
+
+        return d.promise();
+    },
+
+    getListItems: function (webUrl, listTitle, query, itemLimit, callBack) {
+        query = query || "<Query></Query>";
+        itemLimit = itemLimit || 1000;
+
+        var clientContext = webUrl ? new SP.ClientContext(webUrl) : SP.ClientContext.get_current();
+        var oList = clientContext.get_web().get_lists().getByTitle(listTitle);
+
+        var camlQuery = new SP.CamlQuery();
+        camlQuery.set_viewXml('<View>' + query + '<RowLimit>' + itemLimit + '</RowLimit></View>');
+        var currentItems = oList.getItems(camlQuery);
+
+        clientContext.load(currentItems);
+        clientContext.executeQueryAsync(
+            Function.createDelegate(this, currentSuccess),
+            Function.createDelegate(this, currentFail)
+        );
+
+        function currentSuccess(sender, args) {
+            var listItemEnumerator = currentItems.getEnumerator();
+            callBack(listItemEnumerator);
+        }
+
+        function currentFail(sender, args) {
+            console.log(args.get_message());
+        }
+    },
+
+    showBigPicture: function () {
+        var control = $(".sura-pictures");
+        if (control.length > 0) {
+            var imgList = control.find("img:not([ignore])");
+            for (var i = 0; i < imgList.length; i++) {
+                var current = $(imgList[i]);
+                var url = current.attr("src");
+
+                current.addClass("sura-pic");
+                current.on("click", function () {
+                    var source = $(this).attr("src");
+                    var control = $($(this).closest(".sura-pictures")[0]);
+                    var isModal = control.attr("data-modal");
+
+                    if (!isModal) {
+                        window.open(source, "_blank");
+                    }
+                    else {
+                        if (isModal === "vote" && !control.attr("data-readonly")) {
+                            if (source.indexOf("http") === -1) source = "https://" + document.location.host + source;
+                            source = _spPageContextInfo.webAbsoluteUrl + "/_layouts/15/VisualizadorImagenes/ImageViewer.aspx?ItemUrl=" + source + "&SourceUrl=" + _spPageContextInfo.webAbsoluteUrl;
+                            OpenPopUpPageWithTitle(source, null, 1000, 600, "Visor");
+                        }
+                        else {
+                            OpenPopUpPageWithTitle(source, null, null, null, "Visor");
+                        }
+                    }
+                });
+
+                var inDesignMode = document.forms[MSOWebPartPageFormName].MSOLayout_InDesignMode.value;
+                if (inDesignMode != "1") {
+                    if (control.attr("data-modal") == "vote") {
+                        SURACommons.getFileInformationByUrl(url, function (data) {
+                            var control = $('.sura-pictures img').filter(function () {
+                                return $(this).attr('src').toLowerCase().indexOf(data.FileRef.toLocaleLowerCase()) > -1;
+                            });
+
+                            if (control.length > 0 && data.LikesCount) {
+                                control.after("<div class='icon'>" + data.LikesCount + "<i class='fa fa-thumbs-up'></i></div>");
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    },
+
+    getFileInformationByUrl: function (url, callback) {
+        SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function () {
+            var ctx = SP.ClientContext.get_current();
+            var relUrl = url.replace(_spPageContextInfo.siteAbsoluteUrl, '');  //convert to relative url
+            var file = ctx.get_web().getFileByServerRelativeUrl(relUrl);   //get file
+            ctx.load(file, 'ListItemAllFields');
+
+            ctx.executeQueryAsync(
+                function () {
+                    var fields = file.get_listItemAllFields();
+                    var values = fields.get_fieldValues();
+                    callback(values);
+                },
+                function (err) { console.log(err); }
+            );
+        });
+    },
+
+    createListItem: function (data, listname, urlSite) {
+        var promise = new Promise(function (resolve, reject) {
+            var clientContext;
+            if (urlSite === undefined || urlSite === '') {
+                clientContext = new SP.ClientContext.get_current();
+            } else {
+                clientContext = new SP.ClientContext(urlSite);
+            }
+            var items = [];
+            var oList = clientContext.get_web().get_lists().getByTitle(listname);
+            $.each(data, function (index, item) {
+                var itemCreateInfo = new SP.ListItemCreationInformation();
+                var oListItem = oList.addItem(itemCreateInfo);
+                $.each(item, function (indexColumns, itemColumns) {
+                    oListItem.set_item(itemColumns.column, itemColumns.value);
+                });
+                oListItem.update();
+                clientContext.load(oListItem);
+                items.push(oListItem);
+            });
+
+            clientContext.executeQueryAsync(
+				Function.createDelegate(this, onQuerySucceeded),
+				Function.createDelegate(this, onQueryFailed)
+			);
+            function onQuerySucceeded() {
+                var result = [];
+                $.each(items, function (index, item) {
+                    result.push(item.get_id());
+                });
+                resolve(result)
+            }
+
+            function onQueryFailed(sender, args) {
+                console.error('Request failed. ' + args.get_message() +
+				'\n' + args.get_stackTrace());
+                reject(args.get_message());
+            }
+        });
+        return promise;
+    },
+    ReadCookieUpdatePersonalInformation: function () {
+        ExecuteOrDelayUntilScriptLoaded(CheckCookieUpdateProfile, "SP.js");
+        function CheckCookieUpdateProfile() {
+            var cookie = SURACommons.getCookie("UpdateProfile")
+            if (!cookie) {
+                var interval = setInterval(function () {
+                    if (jQuery.isFunction(OpenPopUpPageWithTitle)) {
+                        OpenPopUpPageWithTitle("/_layouts/15/profile/update.aspx", callBackPopUp, null, null, 'Actualización de Datos');
+                        clearInterval(interval);
+                    }
+                }, 200);                
+            }
+        }
+
+        function callBackPopUp(result, target) {
+            var cookie = SURACommons.getCookie("UpdateProfile")
+            if (!cookie) {
+                if (result == SP.UI.DialogResult.cancel) {
+                    var now = new Date();
+                    var expire = new Date();
+                    expire.setFullYear(now.getFullYear());
+                    expire.setMonth(now.getMonth());
+                    expire.setDate(now.getDate() + 1);
+                    expire.setHours(1);
+                    expire.setMinutes(1);
+                    document.cookie = "UpdateProfile" + "=" + "true" + "; expires=" + expire.toGMTString() + ";";
+                }
+            }
+        }
+    },
+	changeErrorMsg: function () {
+		setTimeout(function () {
+		  var errorList = $(".noindex .ms-srch-error-header");
+		  for(var i=0; i<errorList.length; i++) {
+			  var current = $(errorList[i]);
+			  var dad = current.parent();
+			  var ele = dad.parent();
+			  var template = '<h3>' +
+								'<div class="col-md-2">' +
+									'<span class="fa fa-warning" style="font-size: 80px;"></span>' +
+								'</div>' +
+								'<div class="col-md-10">' +
+									'Actualmente tenemos problemas para recuperar la información de esta sección, ' +
+									'estamos trabajando para recuperar el servicio. <br>Muchas gracias por la comprensión.' +
+								'</div>' +
+							'</h3>';
+			  
+			  dad.css("display", "none");  
+			  ele.append(template);
+		  }
+		}, 3000);
+	}
+}

@@ -1,0 +1,290 @@
+﻿var nextEvent = {
+
+    eventList: {},
+    oList: {},
+    week: ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo"],
+
+    init: function init() {
+        SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function () {
+            nextEvent.initData();
+        });
+    },
+
+    dayClick: function dayClick() {
+        var day = $(this);
+
+        $("#eventos-semana .lista-semana li").removeClass("active");
+        $("#eventos-semana .evento-contenido div").removeClass("active");
+
+        var dayClass = day.attr("class").trim();
+        day.addClass("active");
+
+        $("#eventos-semana .evento-contenido div[class='" + dayClass + "']").addClass("active");
+    },
+
+    paintCalendar: function paintCalendar() {
+        var d = new Date();
+        var day = d.getDay();
+        var diff = d.getDate() - day + (day == 0 ? -6 : 1);
+        var monday = new Date(d.setDate(diff));
+        var weekDay = new Date(monday.setDate(monday.getDate() - 1));
+        var content = "";
+
+        $("#eventos-semana").empty();
+        $("#eventos-semana").append("<ul class='lista-semana'></ul>");
+        $("#eventos-semana").append("<div class='evento-contenido'></div>");
+
+        for (var i = 0; i < 7; i++) {
+            var weekDay = new Date(weekDay.setDate(weekDay.getDate() + 1));
+            var weekDate = weekDay.getDate() + "/" + (weekDay.getMonth() + 1) + "/" + weekDay.getFullYear();
+            $("#eventos-semana .lista-semana").append("<li class='" + nextEvent.week[i] + "' value='" + weekDay.toString() + "'>" + nextEvent.week[i] + "<br />" + weekDate + "</li>");
+
+            if (!content) content = "<div class='item-evento'><div class='card no-item'><i class='fa fa-calendar' />No hay eventos para este día.</div></div>";
+            $("#eventos-semana .evento-contenido").append("<div class='" + nextEvent.week[i] + "'>" + content + "</div>");
+        }
+    },
+
+    initControls: function initControls() {
+        var date = new Date();
+        var index = date.getDay() - 1;
+        var dayLink = $("#eventos-semana .lista-semana li").get(index);
+
+        $("#eventos-semana .lista-semana li").on("click", nextEvent.dayClick);
+        $(dayLink).addClass("active");
+        $(dayLink).click();
+
+        var currentEvent = $("#home-feat-eventos-desc h3 a").attr("href");
+        if (currentEvent == "/") {
+
+            var active = false;
+            var items = $(".evento-contenido > div");
+            var dates = $(".evento-contenido div.active .item-evento")[0]
+
+            items.each(function (i, item) {
+                var classList = $(item).attr("class").split(' ');
+                if ($.inArray("active", classList) >= 0) active = true;
+                if (active) {
+                    var child = item.children;
+                    var childClass = $(child[0].firstChild).attr("class").split(' ');
+                    if ($.inArray("no-item", childClass) < 0) {
+                        dates = child[0];
+                        active = false;
+                    }
+                }
+            });
+
+            if (dates) {
+                $("#home-feat-eventos-desc h3 a").html($(dates).find(".title").text());
+                $("#home-feat-eventos-desc p").html($(dates).find(".card div").text());
+
+                if ($(dates).find(".card").attr("onclick")) {
+                    var eventUrl = $(dates).find(".card").attr("onclick").split("\"")[1];
+                    if (eventUrl) {
+                        $("#home-feat-eventos-desc h3 a").attr("href", eventUrl);
+                        $("#home-feat-eventos-c2a a").attr("href", eventUrl);
+                    }
+                }
+            }
+			
+			var emptyControl = $("#home-feat-eventos-c2a a");
+            if (emptyControl.attr("href") == "/") {
+                emptyControl.hide();
+				emptyControl.parent().append('<h2>POR AHORA<br>No hay eventos esta semana, espera más información en los próximos días y participa!!!</h2>');
+            }
+        }
+    },
+
+    initData: function initData() {
+        var query = "<Query><Where><DateRangesOverlap><FieldRef Name='EventDate' /><FieldRef Name='EndDate' />" +
+                    "<FieldRef Name='RecurrenceID' /><Value Type='DateTime'><Week /></Value></DateRangesOverlap>" +
+                    "</Where><OrderBy><FieldRef Name='EventDate'/></OrderBy></Query>";
+
+        var clientContext = new SP.ClientContext("/sites/prensa");
+        nextEvent.oList = clientContext.get_web().get_lists().getByTitle('Eventos');
+
+        var camlQuery = new SP.CamlQuery();
+        camlQuery.set_viewXml("<View>" + query + '<RowLimit>100</RowLimit></View>');
+
+        clientContext.load(nextEvent.oList, "DefaultDisplayFormUrl");
+        nextEvent.eventList = nextEvent.oList.getItems(camlQuery);
+
+        clientContext.load(nextEvent.oList, "DefaultDisplayFormUrl");
+        clientContext.load(nextEvent.eventList);
+        clientContext.executeQueryAsync(
+            Function.createDelegate(this, nextEvent.cargaExitosa),
+            Function.createDelegate(this, nextEvent.cargaFallo)
+        );
+    },
+
+    cargaExitosa: function cargaExitosa(sender, args) {
+
+        nextEvent.paintCalendar();
+
+        var listItemEnumerator = nextEvent.eventList.getEnumerator();
+        while (listItemEnumerator.moveNext()) {
+            var oListItem = listItemEnumerator.get_current();
+            var ini = oListItem.get_item('EventDate');
+            var end = oListItem.get_item('EndDate');
+            var iniTime = ini.getHours() + ":" + ((ini.getMinutes() < 10 ? '0' : '') + ini.getMinutes());
+            var endTime = end.getHours() + ":" + ((end.getMinutes() < 10 ? '0' : '') + end.getMinutes());
+            var title = oListItem.get_item('Title');
+            var desc = oListItem.get_item('Description');
+            var path = nextEvent.oList.get_defaultDisplayFormUrl() + "?ID=" + oListItem.get_item("ID");
+            var click = 'OpenPopUpPageWithTitle("' + path + '", null, null, null, "Evento")';
+            var recurrence = oListItem.get_item('RecurrenceData');
+
+            if (recurrence) {
+                var data = nextEvent.getFrecuency(recurrence);
+                var repeat = $(data).find("repeat");
+                var time = repeat.children().eq(0);
+
+                switch (time.prop("tagName")) {
+                    case "weekly":
+
+                        time.each(function () {
+
+                            $.each(this.attributes, function () {
+
+                                if (this.specified) {
+                                     
+                                    var attribute = this.name;
+                                    var days = $("#eventos-semana .lista-semana li");
+                                    days.each(function (i, item) {
+
+                                        var currentDay = $(item).attr("value");
+                                        var weekDay = new Date(currentDay);
+
+                                        if (weekDay.setHours(0, 0, 0, 0) >= ini.setHours(0, 0, 0, 0) && weekDay.setHours(0, 0, 0, 0) <= end.setHours(0, 0, 0, 0)) {
+                                            if (weekDay.toDateString().toLowerCase().substring(0, 2) == attribute) {
+
+                                                nextEvent.paintEvent(iniTime, endTime, title, desc, click, nextEvent.week[i]);
+
+                                            }
+                                        }
+
+                                    });
+                                }
+                            })
+                        });
+
+                        break;
+
+                    case "daily":
+
+                        if (time.attr("weekday") != null) {
+
+                            var instances = $(data).find("repeatInstances");
+                            var times = Number(instances.html());
+                            var currentDay = new Date(ini.toString());
+
+                            var days = $("#eventos-semana .lista-semana li");
+                            days.each(function (i, item) {
+
+                                var currentDay = $(item).attr("value");
+                                var weekDay = new Date(currentDay);
+
+                                if (weekDay.setHours(0, 0, 0, 0) >= ini.setHours(0, 0, 0, 0) && weekDay.setHours(0, 0, 0, 0) <= end.setHours(0, 0, 0, 0)) {
+
+                                    nextEvent.paintEvent(iniTime, endTime, title, desc, click, nextEvent.week[i]);
+                                }
+
+                            });
+                        }
+                        else {
+
+                            var frecuency = Number(time.attr("dayFrequency"));
+                            var instances = $(data).find("repeatInstances");
+                            var times = Number(instances.html());
+
+                            var days = $("#eventos-semana .lista-semana li");
+                            days.each(function (i, item) {
+
+                                var weekValue = $(item).attr("value");
+                                var weekDay = new Date(weekValue);
+                                var currentDay = new Date(ini.toString());
+
+                                if (times) {
+                                    for (var j = 0; j < times; j++) {
+                                        if (weekDay.setHours(0, 0, 0, 0) == currentDay.setHours(0, 0, 0, 0)) {
+
+                                            nextEvent.paintEvent(iniTime, endTime, title, desc, click, nextEvent.week[i]);
+
+                                        }
+
+                                        currentDay.setDate(currentDay.getDate() + frecuency);
+                                    }
+                                }
+                                else {
+
+                                    var windowEnd = $(data).find("windowEnd").html();
+                                    var endValue = new Date(windowEnd);
+
+                                    while (currentDay.setHours(0, 0, 0, 0) <= endValue.setHours(0, 0, 0, 0)) {
+
+                                        if (weekDay.setHours(0, 0, 0, 0) == currentDay.setHours(0, 0, 0, 0)) {
+
+                                            nextEvent.paintEvent(iniTime, endTime, title, desc, click, nextEvent.week[i]);
+
+                                        }
+
+                                        currentDay.setDate(currentDay.getDate() + frecuency);
+                                    }
+                                }
+
+                            });
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            else {
+                var days = $("#eventos-semana .lista-semana li");
+                days.each(function (i, item) {
+
+                    var currentDay = $(item).attr("value");
+                    var weekDay = new Date(currentDay);
+
+                    if (weekDay.setHours(0, 0, 0, 0) >= ini.setHours(0, 0, 0, 0) && weekDay.setHours(0, 0, 0, 0) <= end.setHours(0, 0, 0, 0)) {
+
+                        nextEvent.paintEvent(iniTime, endTime, title, desc, click, nextEvent.week[i]);
+
+                    }
+                });
+            }
+        }
+
+        nextEvent.initControls();
+    },
+
+    cargaFallo: function cargaFallo(sender, args) {
+        $("#eventos-semana").html("Hubo un error cargando los datos, por favor actualice la página.");
+    },
+
+    getFrecuency: function getFrecuency(recurrence) {
+        var data = "";
+
+        try {
+            data = $.parseXML(recurrence);
+        } catch (e) {
+            console.log(e);
+        }
+
+        return data;
+    },
+
+    paintEvent: function paintEvent(ini, end, title, desc, click, week) {
+
+        var data = "<span class='date'>Inicia: " + ini + " - Finaliza: " + end + "</span> <span class='title'>" + title + "</span>";
+        var description = desc;
+
+        var content = "<div class='item-evento'><div class='card' onclick='" + click + "'><i class='fa fa-calendar' />" +
+                    data + "<div>" + description + "</div></div></div>";
+
+        $("#eventos-semana .evento-contenido ." + week + " .no-item").parent().parent().remove()
+        $("#eventos-semana .evento-contenido").append("<div class='" + week + "'>" + content + "</div>");
+
+    }
+}

@@ -1,0 +1,41 @@
+
+
+function toggleMenu(){
+	$('#s4-bodyContainer').toggleClass('menu-open');
+}
+
+
+/* GO TO TOP - BUTTON */
+
+$(document).ready(function() {
+	// Show or hide the sticky footer button
+	$("#s4-workspace").scroll(function() {
+		if ($(this).scrollTop() > 200) {
+			$('.go-top').fadeIn(200);
+		} else {
+			$('.go-top').fadeOut(200);
+		}
+	});
+	
+	// Animate the scroll to top
+	$('.go-top').click(function(event) {
+		event.preventDefault();
+		
+		$('#s4-workspace').animate({scrollTop: 0}, 300);
+	})
+});
+
+
+/* ADD CLASS LAST  CHILD */
+
+
+/*
+$(document).ready(function() {
+	if (typeof $f != "undefined" && $f) $ = $f;
+	$("").addClass('');		
+	
+	if(location.href.indexOf("/_layouts/15/fondo/") > 0) {
+		var content = $("section.site-menu").hide();			
+	}
+})
+*/

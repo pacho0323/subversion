@@ -1,0 +1,72 @@
+﻿var webPartId = 0;
+var webPartParent = "";
+
+function cargarPestanas(parent, id) {
+    webPartId = id;
+    webPartParent = parent;
+
+    var query = "<Query><Where><Eq><FieldRef Name='WebPartId' />" +
+                    "<Value Type='Number'>" + webPartId + "</Value></Eq></Where>" +
+                    "<OrderBy><FieldRef Name='Orden' Ascending='True' /></OrderBy></Query>";
+   
+    var clientContext = new SP.ClientContext.get_current();
+    var oList = clientContext.get_web().get_lists().getByTitle('Pestañas de Contenido');
+
+    var camlQuery = new SP.CamlQuery();
+    camlQuery.set_viewXml('<View>' + query + '<RowLimit>10</RowLimit></View>');
+    this.collListItem = oList.getItems(camlQuery);
+
+    clientContext.load(collListItem);
+    clientContext.executeQueryAsync(
+        Function.createDelegate(this, this.onQuerySucceeded),
+        Function.createDelegate(this, this.onQueryFailed)
+    );                  
+}
+
+function onQuerySucceeded(sender, args) {
+    var listItemInfo = '';
+    var listItemEnumerator = collListItem.getEnumerator();
+
+    var pestanas = 0;
+    while (listItemEnumerator.moveNext()) {
+        var oListItem = listItemEnumerator.get_current();
+        var pestana = oListItem.get_item('Title');
+        var contenido = oListItem.get_item('Contenido');
+
+        if (pestanas == 0) {
+            var liHtml = "<li class='pestana choice" + pestanas +
+                             " activa' onclick='pestanaclick(" + pestanas + ", " + webPartParent + ");' ><a href='#'>" + pestana + "</a></li>";
+            $("#" + webPartParent + " .pestanas-menu").append(liHtml);
+
+            var divHtml = "<div class='contenido contenido" + pestanas + "'>" + contenido + "</div>";
+            $("#" + webPartParent + " .pestanas-contenido").append(divHtml);
+        }
+        else {
+            var liHtml = "<li class='pestana choice" + pestanas +
+                             "' onclick='pestanaclick(" + pestanas + ", " + webPartParent + ");' ><a href='#'>" + pestana + "</a></li>";
+            $("#" + webPartParent + " .pestanas-menu").append(liHtml);
+
+            var divHtml = "<div class='contenido contenido" + pestanas + "'>" + contenido + "</div>";
+            $("#" + webPartParent + " .pestanas-contenido").append(divHtml);
+        }
+
+        pestanas++;
+    }
+
+    $("#" + webPartParent + " .contenido").hide();
+	pestanaclick(0, document.getElementById(webPartParent));   
+}
+
+function onQueryFailed(sender, args) {
+}
+
+function pestanaclick(numero, parent) {
+    $("#" + parent.id + " li").removeClass("activa");
+    $("#" + parent.id + " li.choice" + numero).addClass("activa");
+    
+    $("#" + parent.id + " .contenido").hide();
+    $("#" + parent.id + " .contenido").find("iframe").prop("src", "");
+    
+	$("#" + parent.id + " .contenido" + numero).find("iframe").prop("src", $("#" + parent.id + " .contenido" + numero).find("iframe").attr("data-src"));
+    $("#" + parent.id + " .contenido" + numero).show();
+}

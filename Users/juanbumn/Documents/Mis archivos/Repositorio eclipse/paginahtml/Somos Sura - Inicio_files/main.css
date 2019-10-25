@@ -1,0 +1,419 @@
+﻿.app-slide-item img {
+    height: 90px;
+    width: 90px;
+}
+
+#applications a{
+    text-decoration: none;
+}
+
+#aplicacion-display {
+	position: relative;
+}
+
+#aplicacion-display .imagen {
+	float: left;
+}
+
+#aplicacion-display .informacion {
+	float: left;
+}
+
+	#aplicacion-display .informacion .titulo{
+		color: #0063b1;
+	}
+	
+	#aplicacion-display .informacion .descripcion {
+		color: #777;
+	}
+	
+	#aplicacion-display .informacion .url {
+		font-size: 14px;
+		color: teal;
+	}
+	
+/*********** Catálogo de Servicios ********/
+#catalogo-servicios {
+    margin: 0 auto;
+    width: 90%;
+    padding: 10px;
+}
+
+.codigo-servicio {
+    text-align: center;
+    background-color: rgb(245, 245, 245);
+    padding: 10px;
+}
+
+    .codigo-servicio div {
+        margin: 10px auto;
+        display: inline;
+    }
+
+    .codigo-servicio .campo input {
+        text-align: center;
+		  font-size: 12pt;
+		  -moz-box-shadow: rgba(0,0,0, 0.1) 0 0 8px;
+		  -webkit-box-shadow: rgba(0,0,0, 0.1) 0 0 8px;
+		  box-shadow: rgba(0,0,0, 0.1) 0 0 8px;
+		  width: 40%;
+		  padding: 10px;    
+	}
+	
+	.codigo-servicio .boton input[type='submit'] {
+		background-color: #0483a0;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#31b2c3), to(#0483a0));
+		background-image: -webkit-linear-gradient(top, #31b2c3, #0483a0);
+		background-image: -moz-linear-gradient(top, #31b2c3, #0483a0);
+		background-image: -ms-linear-gradient(top, #31b2c3, #0483a0);
+		background-image: -o-linear-gradient(top, #31b2c3, #0483a0);
+		background-image: linear-gradient(top, #31b2c3, #0483a0);
+		border: 1px solid #00748f;
+		-moz-border-radius: 3px;
+		-webkit-border-radius: 3px;
+		border-radius: 3px;
+		-webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 1px 0 #FFF;
+		-moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 1px 0 #FFF;
+		box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 1px 0 #FFF;
+		color: #fafafa;
+		cursor: pointer;
+		height: 42px;
+		font: 15px Arial, Helvetica;
+		padding: 0 5px;
+		text-transform: uppercase;
+		text-shadow: 0 1px 0 rgba(0, 0 ,0, .3);
+		width: 100px;
+	}
+	
+	.codigo-servicio .boton input[type='submit']:hover,
+	.codigo-servicio .boton input[type='submit']:focus {
+		background-color: #31b2c3;
+		background-image: -webkit-gradient(linear, left top, left bottom, from(#0483a0), to(#31b2c3));
+		background-image: -webkit-linear-gradient(top, #0483a0, #31b2c3);
+		background-image: -moz-linear-gradient(top, #0483a0, #31b2c3);
+		background-image: -ms-linear-gradient(top, #0483a0, #31b2c3);
+		background-image: -o-linear-gradient(top, #0483a0, #31b2c3);
+		background-image: linear-gradient(top, #0483a0, #31b2c3);
+	}
+	
+	.codigo-servicio .boton input[type='submit']:active {
+		-webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
+		-moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
+		outline: 0;
+	}
+	
+	.codigo-servicio .boton input[type='submit']::-moz-focus-inner {
+		border: 0;
+	}
+
+    .codigo-servicio .etiqueta {
+        font-size: 18px;
+	  margin-top: 35px;
+	  margin-right: 10px;
+    }
+
+#maestro {
+    text-align: center;
+    margin: 0 auto;	
+    background-color: #3262BA;
+	padding: 20px;
+	width: 95%;
+	color: white;
+    margin-bottom: 20px;
+}
+
+#titulo-maestro {
+	font-weight: bold;
+  	font-size: 18px;
+  	margin-bottom: 10px;
+}
+
+#autor-maestro {
+	font-size: 16px;
+}
+
+#autor-maestro h3 {	
+	margin-top: 5px;
+  	color: white;
+  	display: inline;
+  	margin-right: 5px;
+  	font-size: 16px;
+}
+
+#detalle {
+    width: 95%;
+    margin: 10px auto;
+    display: table;
+    padding: 10px;
+}
+
+div#titulo-encabezado, div#estado-encabezado, div#descripcion-encabezado,
+div#titulo-detalle, div#estado-detalle, div#descripcion-detalle {
+    width: 25%;
+    float: left;
+    margin-bottom: 10px;
+}
+
+div#descripcion-encabezado, div#descripcion-detalle {
+	width: 50%;
+}
+
+div#titulo-encabezado, div#estado-encabezado, div#descripcion-encabezado {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 2px 0 20px 0;
+}
+
+div#titulo-detalle, div#estado-detalle, div#descripcion-detalle {
+
+}
+
+table.tabla-detalle tr:first-child {
+  background-color: #4285F4;
+  color: white;
+  font-weight: bold;
+}
+
+table.tabla-detalle td {
+  font-size: 1.2em;
+  border: 1px solid #4285F4;
+  padding: 3px 7px 2px 7px;
+}
+
+table.tabla-detalle {
+      border-collapse: collapse;
+      width: 100%;
+}
+
+#cat-ser-input {
+	margin: 30px 0 0 0;
+	color: #1E73BE;
+  	font-weight: bold;;
+}
+
+#cat-ser-input input[type='text'], #cat-ser-input input[type='number'] {
+	*margin: 0 0 0 5px;
+	*width: 60px;
+}
+
+#cat-ser-input input[type='button'] {
+	padding: 5px 10px;
+	background-color: #1E73BE;
+	color: white;
+	font-weight: bold;
+	margin: 0;
+}
+
+/* Aplicaciones 2.0 */
+
+.sura-applications ul.nav {
+	margin-left: -10px;
+	margin-right: -10px;
+    margin: auto;
+    width: 100%;
+    display: block;
+    text-align: center;
+}
+
+.sura-applications ul.nav li {
+	padding: 0 10px;
+    margin: 0;
+    width: 9%;
+    float: none;
+    display: inline-block;
+}
+
+.sura-applications ul.nav li a,
+.sura-applications ul.nav li a:focus,
+.sura-applications ul.nav li a:hover {
+	display: block;
+	padding: 0;
+    border-radius: 0;
+	opacity: 0.6;
+    background-color: transparent;
+}
+
+.sura-applications ul.nav li.active a,
+.sura-applications ul.nav li.active a:focus,
+.sura-applications ul.nav li.active a:hover {
+	opacity: 1;
+}
+
+.sura-applications ul.nav li.active a img,
+.sura-applications ul.nav li.active a:focus img,
+.sura-applications ul.nav li.active a:hover img {
+    outline: 5px solid #e4e4e4;
+}
+
+.sura-applications ul.nav li a img {
+	width: 100%;
+}
+
+.sura-applications .tab-content {
+	overflow: hidden;
+	clear: both;
+}
+
+.sura-applications .tab-content .tab-pane {
+    padding: 10px 0;
+}
+
+.sura-applications .tab-content .tab-pane a img {
+    width: 100%;
+}
+
+.sura-applications .tab-content a h3 {
+    letter-spacing: 1px;
+    margin: 15px 0;
+    font-size: 18px;
+}
+
+
+
+.sura-applications .app-copy h3 {
+    line-height: 1.8;
+    letter-spacing: 1px;
+    font-size: 20px;
+    margin: 0 0 5px 0;
+}
+
+.sura-applications .app-copy p {
+    line-height: 2;
+    letter-spacing: 1px;
+    margin: 0 0 15px 0;
+    font-size: 15px;
+}
+
+.sura-applications .app-copy a {
+	background-color: #0033A0;
+    letter-spacing: 1px;
+    padding: 10px 15px;
+    display: inline-block;
+    color: #fff;
+}
+
+.sura-applications .tab-content .tab-pane .desktopImg img {	
+	width: 100%;
+}
+
+
+
+
+.sura-applications ul.nav li a h3 {
+    font-size: 12px;
+    text-align: center;
+    color: #333;
+    letter-spacing: 1px;
+    line-height: 1.5;
+    margin: 10px 0 0 0;
+    height: 55px;
+    overflow: hidden;
+}
+
+@media (max-width: 992px) {
+
+.sura-applications ul.nav {
+	display: none;
+}
+
+.responsive-tabs-container .tab-content a img {
+	display: none;
+}
+
+.sura-applications .tab-content .tab-pane {
+    padding: 10px;
+    display: block;
+    width: 25%;
+    float: left;
+}
+
+.sura-applications .tab-content .tab-pane .app-copy {
+	display: none;
+}
+
+.sura-applications .tab-content .tab-pane .desktopImg {	
+	display: none;
+}
+
+}
+
+
+
+@media (max-width: 768px) {
+.sura-applications .tab-content .tab-pane {
+    width: 33.33333%;
+}
+}
+
+
+
+
+.responsive-tabs-container[class*="accordion-"] .tab-pane {
+	margin-bottom: 15px;
+}
+
+.responsive-tabs-container[class*="accordion-"] .accordion-link {
+    display: none;
+    margin-bottom: 0;
+    padding: 0 15px;
+    background-color: #f5f5f5;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    color: #333;
+}
+
+@media (max-width: 767px) {
+
+.responsive-tabs-container.accordion-xs .nav-tabs {
+	display: none;
+}
+
+.responsive-tabs-container.accordion-xs .accordion-link {
+	display: block;
+}
+
+}
+
+
+
+@media (min-width: 768px) and (max-width: 991px) {
+
+.responsive-tabs-container.accordion-sm .nav-tabs {
+	display: none;
+}
+
+
+.responsive-tabs-container.accordion-sm .accordion-link {
+	display: block;
+}
+
+}
+
+
+
+@media (min-width: 992px) and (max-width: 1199px) {
+
+.responsive-tabs-container.accordion-md .nav-tabs {
+	display: none;
+}
+
+.responsive-tabs-container.accordion-md .accordion-link {
+	display: block;
+}
+
+}
+
+
+
+@media (min-width: 1200px) {
+
+.responsive-tabs-container.accordion-lg .nav-tabs {
+	display: none;
+}
+
+.responsive-tabs-container.accordion-lg .accordion-link {
+	display: block;
+}
+
+}

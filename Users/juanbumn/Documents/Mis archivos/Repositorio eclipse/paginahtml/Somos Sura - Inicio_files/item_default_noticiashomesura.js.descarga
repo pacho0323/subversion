@@ -1,0 +1,137 @@
+/* Actualmente, este archivo está asociado a un archivo HTML del mismo nombre y está extrayendo contenido de él. No podrá mover, eliminar, cambiar el nombre ni hacer ninguna otra modificación en el archivo hasta que no los desasocie. */
+
+function DisplayTemplate_1c46b74cdc5c4cc0a5f177c5d3b4057a(ctx) {
+  var ms_outHtml=[];
+  var cachePreviousTemplateData = ctx['DisplayTemplateData'];
+  ctx['DisplayTemplateData'] = new Object();
+  DisplayTemplate_1c46b74cdc5c4cc0a5f177c5d3b4057a.DisplayTemplateData = ctx['DisplayTemplateData'];
+
+  ctx['DisplayTemplateData']['TemplateUrl']='~sitecollection\u002f_catalogs\u002fmasterpage\u002fDisplay Templates\u002fSearch\u002fItem_Default_NoticiasHomeSura.js';
+  ctx['DisplayTemplateData']['TemplateType']='Item';
+  ctx['DisplayTemplateData']['TargetControlType']=['SearchResults'];
+  this.DisplayTemplateData = ctx['DisplayTemplateData'];
+
+  ctx['DisplayTemplateData']['ManagedPropertyMapping']={'Title':['Title'], 'Path':['Path'], 'Description':['Description'], 'EditorOWSUSER':['EditorOWSUSER'], 'LastModifiedTime':['LastModifiedTime'], 'CollapsingStatus':['CollapsingStatus'], 'DocId':['DocId'], 'HitHighlightedSummary':['HitHighlightedSummary'], 'HitHighlightedProperties':['HitHighlightedProperties'], 'FileExtension':['FileExtension'], 'ViewsLifeTime':['ViewsLifeTime'], 'ParentLink':['ParentLink'], 'FileType':['FileType'], 'IsContainer':['IsContainer'], 'SecondaryFileExtension':['SecondaryFileExtension'], 'DisplayAuthor':['DisplayAuthor'], 'AverageRating':['AverageRating'], 'RatingCount':['RatingCount'], 'ContentType':['ContentType'], 'Created':['Created'], 'SPSiteURL':['SPSiteURL'], 'PublishingImageCaptionOWSHTML':['PublishingImageCaptionOWSHTML'], 'ArticleByLineOWSTEXT':['ArticleByLineOWSTEXT'], 'ArticleStartDateOWSDATE':['ArticleStartDateOWSDATE']};
+  var cachePreviousItemValuesFunction = ctx['ItemValues'];
+  ctx['ItemValues'] = function(slotOrPropName) {
+    return Srch.ValueInfo.getCachedCtxItemValue(ctx, slotOrPropName)
+};
+
+ms_outHtml.push('',''
+);
+                if(!$isNull(ctx.CurrentItem) && !$isNull(ctx.ClientControl)){
+                    var id = ctx.ClientControl.get_nextUniqueId();
+                    var itemId = id + Srch.U.Ids.item;
+                    var hoverId = id + Srch.U.Ids.hover;
+                    var image = ctx.CurrentItem.PublishingImageCaptionOWSHTML;
+                    var iconUrl = '256_IC' + ctx.CurrentItem.FileExtension + '.png';
+                    var datetime = $getItemValue(ctx, 'ArticleStartDateOWSDATE').value; if(!datetime) datetime = new Date();
+                    var day = datetime.getDate(); var month = datetime.getMonth(); var year = datetime.getFullYear();
+                    var months = new Array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+                    var url = 'javascript:OpenPopUpPageWithTitle("' + ctx.CurrentItem.SPSiteURL + '/_layouts/15/CalificarComentar/RateAndReview.aspx?ItemUrl=' + ctx.CurrentItem.Path + '", "", 800, 600,"Calificar y Comentar")';
+                    var hoverUrl = "~sitecollection/_catalogs/masterpage/Display Templates/Search/Item_Default_HoverPanel.js";
+                    $setResultItem(itemId, ctx.CurrentItem);
+                    if(ctx.CurrentItem.IsContainer){
+                        ctx.CurrentItem.csr_Icon = Srch.U.getFolderIconUrl();
+                    }
+                    ctx.currentItem_ShowHoverPanelCallback = Srch.U.getShowHoverPanelCallback(itemId, hoverId, hoverUrl);
+                    ctx.currentItem_HideHoverPanelCallback = Srch.U.getHideHoverPanelCallback();
+
+                    if (image) {
+                        var images = $("<div>" + image + "</div>").find("img");
+                        if (images.length > 0) {
+                            image = images[0].outerHTML;
+                        }
+                    }
+        ms_outHtml.push(''
+,'        <div id="noticias-home" class="search-nothome-item col-md-4">'
+,'            <figure class="card">'
+);
+                if(!$isNull(ctx.CurrentItem.PublishingImageCaptionOWSHTML) && ctx.CurrentItem.PublishingImageCaptionOWSHTML != "")
+                {
+        ms_outHtml.push(''
+,''
+,'                <div class="search-image-item">'
+,'                    <a href="', $htmlEncode(ctx.CurrentItem.Path) ,'" target="_parent">'
+,'                        ', image ,''
+,'                    </a>'
+,'                </div>'
+);
+                }
+        ms_outHtml.push(''
+,'                <figcaption>'
+,'                    <div class="search-header-item">'
+,'                        <div class="search-info-item">'
+,'                            <div class="search-title-item">'
+,'                                <a href="', $htmlEncode(ctx.CurrentItem.Path) ,'" title="T&#237;tulo" target="_parent">'
+,'                                    <h1>', $htmlEncode(ctx.CurrentItem.Title) ,'</h1>'
+,'                                </a>'
+,'                            </div>'
+,'                            <div class="search-datecontent-item">'
+,'                                <span class="search-datetime-item" title="Fecha del Art&#237;culo">'
+,'                                    <h4><strong>', $htmlEncode(day + ' de ' + months[month] + ' de ' + year) ,'</strong></h4>'
+,'                                </span>'
+,'                            </div>'
+,'                        </div>'
+,'                    </div>'
+,'                    <div class="search-footer-item">'
+,'                        <div class="search-description-item" title="Descripci&#243;n">'
+,'                            ', $htmlEncode(ctx.CurrentItem.ArticleByLineOWSTEXT) ,''
+,'                        </div>'
+,'                        <div id="', $htmlEncode(hoverId) ,'" class="ms-srch-hover-outerContainer"></div>'
+,'                        <a href="', $htmlEncode(ctx.CurrentItem.Path) ,'" title="Calificar y Comentar">'
+,'                            <div class="search-rating-item">'
+,'                                ', (showStars(ctx.CurrentItem.AverageRating, ctx.CurrentItem.RatingCount)) ,''
+,'                            </div>'
+,'                        </a>'
+,'                    </div>'
+,'                </figcaption>'
+,'            </figure>'
+,'        </div>        '
+);
+                }
+
+                function showStars(rating, count){
+                    if(count == null) count = 0;
+
+                    var stars = '';
+                    for (var i = 0; i < 5; i++){
+                        if(rating > i && rating < i + 1) {
+                            stars += '<span class="half-star"></span>';
+                        }
+                        else {
+                            if(rating > i) {
+                                stars += '<span class="full-star"></span>';
+                            }
+                            else {
+                                stars += '<span></span>';
+                            }
+                        }
+                    }
+
+                    stars += ' | ' + count + ' votos';
+                    return stars;
+                }
+        ms_outHtml.push(''
+,'    '
+);
+
+  ctx['ItemValues'] = cachePreviousItemValuesFunction;
+  ctx['DisplayTemplateData'] = cachePreviousTemplateData;
+  return ms_outHtml.join('');
+}
+function RegisterTemplate_1c46b74cdc5c4cc0a5f177c5d3b4057a() {
+
+if ("undefined" != typeof (Srch) &&"undefined" != typeof (Srch.U) &&typeof(Srch.U.registerRenderTemplateByName) == "function") {
+  Srch.U.registerRenderTemplateByName("Item_Default", DisplayTemplate_1c46b74cdc5c4cc0a5f177c5d3b4057a);
+}
+
+if ("undefined" != typeof (Srch) &&"undefined" != typeof (Srch.U) &&typeof(Srch.U.registerRenderTemplateByName) == "function") {
+  Srch.U.registerRenderTemplateByName("~sitecollection\u002f_catalogs\u002fmasterpage\u002fDisplay Templates\u002fSearch\u002fItem_Default_NoticiasHomeSura.js", DisplayTemplate_1c46b74cdc5c4cc0a5f177c5d3b4057a);
+}
+
+}
+RegisterTemplate_1c46b74cdc5c4cc0a5f177c5d3b4057a();
+if (typeof(RegisterModuleInit) == "function" && typeof(Srch.U.replaceUrlTokens) == "function") {
+  RegisterModuleInit(Srch.U.replaceUrlTokens("~sitecollection\u002f_catalogs\u002fmasterpage\u002fDisplay Templates\u002fSearch\u002fItem_Default_NoticiasHomeSura.js"), RegisterTemplate_1c46b74cdc5c4cc0a5f177c5d3b4057a);
+}

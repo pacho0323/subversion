@@ -1,0 +1,125 @@
+/* Actualmente, este archivo está asociado a un archivo HTML del mismo nombre y está extrayendo contenido de él. No podrá mover, eliminar, cambiar el nombre ni hacer ninguna otra modificación en el archivo hasta que no los desasocie. */
+
+function DisplayTemplate_9b171bd5766d46fa9439516a62a66a7a(ctx) {
+  var ms_outHtml=[];
+  var cachePreviousTemplateData = ctx['DisplayTemplateData'];
+  ctx['DisplayTemplateData'] = new Object();
+  DisplayTemplate_9b171bd5766d46fa9439516a62a66a7a.DisplayTemplateData = ctx['DisplayTemplateData'];
+
+  ctx['DisplayTemplateData']['TemplateUrl']='~sitecollection\u002f_catalogs\u002fmasterpage\u002fDisplay Templates\u002fSearch\u002fItem_Default_DocSura.js';
+  ctx['DisplayTemplateData']['TemplateType']='Item';
+  ctx['DisplayTemplateData']['TargetControlType']=['SearchResults'];
+  this.DisplayTemplateData = ctx['DisplayTemplateData'];
+
+  ctx['DisplayTemplateData']['ManagedPropertyMapping']={'Title':['Title'], 'Path':['Path'], 'Description':['Description'], 'EditorOWSUSER':['EditorOWSUSER'], 'LastModifiedTime':['LastModifiedTime'], 'CollapsingStatus':['CollapsingStatus'], 'DocId':['DocId'], 'HitHighlightedSummary':['HitHighlightedSummary'], 'HitHighlightedProperties':['HitHighlightedProperties'], 'FileExtension':['FileExtension'], 'ViewsLifeTime':['ViewsLifeTime'], 'ParentLink':['ParentLink'], 'FileType':['FileType'], 'IsContainer':['IsContainer'], 'SecondaryFileExtension':['SecondaryFileExtension'], 'DisplayAuthor':['DisplayAuthor'], 'AverageRating':['AverageRating'], 'RatingCount':['RatingCount'], 'ContentType':['ContentType'], 'Created':['Created'], 'SPSiteURL':['SPSiteURL'], 'DocumentTitle':['DocumentTitle']};
+  var cachePreviousItemValuesFunction = ctx['ItemValues'];
+  ctx['ItemValues'] = function(slotOrPropName) {
+    return Srch.ValueInfo.getCachedCtxItemValue(ctx, slotOrPropName)
+};
+
+ms_outHtml.push('',''
+); 
+        if(!$isNull(ctx.CurrentItem) && !$isNull(ctx.ClientControl)){
+            var id = ctx.ClientControl.get_nextUniqueId();
+            var itemId = id + Srch.U.Ids.item;
+			var hoverId = id + Srch.U.Ids.hover;
+			var iconUrl = '/Style%20Library/images/256_IC' + ctx.CurrentItem.FileExtension + '.png';
+			var datetime = $getItemValue(ctx, 'Created').value;
+			var day = datetime.getDate(); var month = datetime.getMonth(); var year = datetime.getFullYear();
+			var months = new Array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+			var types = ctx.CurrentItem.ContentType.split('\n\n');
+			var type = types.length > 1 ? types[1] : types[0];
+            var path = ctx.CurrentItem.Path.replace("http://intranet.somossura.com/", "https://www.somossura.com/");
+			var docUrl = ctx.CurrentItem.SPSiteURL.replace("http://intranet.somossura.com/", "https://www.somossura.com/");
+            var url = 'var newUrl = encodeURIComponent("' + path + '"); OpenPopUpPageWithTitle("' + docUrl + '/_layouts/15/CalificarComentar/RateAndReview.aspx?ItemUrl=" + newUrl, "", null, null,"Calificar y Comentar")';
+            var title = GetName(ctx.CurrentItem);
+			var hoverUrl = "~sitecollection/_catalogs/masterpage/Display Templates/Search/Item_Default_HoverPanel.js";
+            $setResultItem(itemId, ctx.CurrentItem);
+			if(ctx.CurrentItem.IsContainer){
+				ctx.CurrentItem.csr_Icon = Srch.U.getFolderIconUrl();
+			}
+			ctx.currentItem_ShowHoverPanelCallback = Srch.U.getShowHoverPanelCallback(itemId, hoverId, hoverUrl);
+            ctx.currentItem_HideHoverPanelCallback = Srch.U.getHideHoverPanelCallback();			
+ms_outHtml.push(''
+,'            <div data-displaytemplate="DefaultItem" style="float:left" class="search-doc-item">				'
+,'				<div class="search-header-item">'
+,'					<div class="search-icon-item">'
+,'                        <a href="', $htmlEncode(path) ,'" title="T&#237;tulo" target="_blank">'
+,'						    <img id="', $htmlEncode(id + Srch.U.Ids.icon) ,'" src="', $htmlEncode(iconUrl) ,'" title="Tipo de Documento" />'
+,'                        </a>'
+,'					</div>'
+,'					<div class="search-info-item">'
+,'						<div class="search-title-item">'
+,'							<a href="', $htmlEncode(path) ,'" title="T&#237;tulo" target="_blank">'
+,'								', $htmlEncode(title) ,''
+,'							</a>'
+,'						</div>	'
+,'						<div class="search-datecontent-item">'
+,'							<span class="search-datetime-item" title="Fecha de Creaci&#243;n">'
+,'                                ', $htmlEncode(day + ' de ' + months[month] + ' de ' + year) ,''
+,'							</span> |'
+,'							<span class="search-contenttype-item" title="Tipo de Contenido">'
+,'                                ', $htmlEncode(type) ,''
+,'							</span>'
+,'						</div>'
+,'					</div>'
+,'				</div>'
+,'				<div class="search-footer-item">'
+,'					<div class="search-description-item" title="Descripci&#243;n">', $htmlEncode(ctx.CurrentItem.Description) ,'</div>'
+,'					<div id="', $htmlEncode(hoverId) ,'" class="ms-srch-hover-outerContainer"></div>'
+,'					<a href="#" onclick="', $htmlEncode(url) ,'; return false;" title="Calificar y Comentar">'
+,'                        <div class="search-rating-item">', (showStars(ctx.CurrentItem.AverageRating, ctx.CurrentItem.RatingCount)) ,'</div>'
+,'                    </a>'
+,'				</div>'
+,'            </div>			'
+); 		
+        } 
+
+    function showStars(rating, count){
+        if(count == null) count = 0;
+
+        var stars = '';        
+        for (var i = 0; i < 5; i++){
+            if(rating > i && rating < i + 1) {
+                stars += '<span class="half-star"></span>';
+            }
+            else {
+                if(rating > i) {
+                    stars += '<span class="full-star"></span>';
+                }
+                else {
+                    stars += '<span></span>';
+                }
+            }
+        }    
+
+        stars += ' | ' + count + ' votos';    
+        return stars;        
+    }
+
+    function GetName(item) {
+        return item.Title;
+    }
+ms_outHtml.push(''
+,'    '
+);
+
+  ctx['ItemValues'] = cachePreviousItemValuesFunction;
+  ctx['DisplayTemplateData'] = cachePreviousTemplateData;
+  return ms_outHtml.join('');
+}
+function RegisterTemplate_9b171bd5766d46fa9439516a62a66a7a() {
+
+if ("undefined" != typeof (Srch) &&"undefined" != typeof (Srch.U) &&typeof(Srch.U.registerRenderTemplateByName) == "function") {
+  Srch.U.registerRenderTemplateByName("Item_Default", DisplayTemplate_9b171bd5766d46fa9439516a62a66a7a);
+}
+
+if ("undefined" != typeof (Srch) &&"undefined" != typeof (Srch.U) &&typeof(Srch.U.registerRenderTemplateByName) == "function") {
+  Srch.U.registerRenderTemplateByName("~sitecollection\u002f_catalogs\u002fmasterpage\u002fDisplay Templates\u002fSearch\u002fItem_Default_DocSura.js", DisplayTemplate_9b171bd5766d46fa9439516a62a66a7a);
+}
+
+}
+RegisterTemplate_9b171bd5766d46fa9439516a62a66a7a();
+if (typeof(RegisterModuleInit) == "function" && typeof(Srch.U.replaceUrlTokens) == "function") {
+  RegisterModuleInit(Srch.U.replaceUrlTokens("~sitecollection\u002f_catalogs\u002fmasterpage\u002fDisplay Templates\u002fSearch\u002fItem_Default_DocSura.js"), RegisterTemplate_9b171bd5766d46fa9439516a62a66a7a);
+}

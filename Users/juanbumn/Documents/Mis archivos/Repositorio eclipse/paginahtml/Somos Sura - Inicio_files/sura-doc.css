@@ -1,0 +1,415 @@
+﻿
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('/Style%20Library/fonts/font-awesome/fontawesome-webfont.eot?v=4.3.0');
+  src: url('/Style%20Library/fonts/font-awesome/fontawesome-webfont.eot?#iefix&v=4.3.0') format('embedded-opentype'), url('/Style%20Library/fonts/font-awesome/fontawesome-webfont.woff2?v=4.3.0') format('woff2'), url('/Style%20Library/fonts/font-awesome/fontawesome-webfont.woff?v=4.3.0') format('woff'), url('/Style%20Library/fonts/font-awesome/fontawesome-webfont.ttf?v=4.3.0') format('truetype'), url('/Style%20Library/fonts/font-awesome/fontawesome-webfont.svg?v=4.3.0#fontawesomeregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+/* Generals (Last documents + Widget News) */
+
+/*
+#s4-workspace {
+    overflow:hidden !important;
+}
+*/
+
+#DeltaPlaceHolderMain div#search-div {
+	height:auto !important;
+    overflow:auto !important;
+}
+
+@media all and (max-width: 900px) { 
+
+#DeltaPlaceHolderMain div#search-div {
+	height:360px !important;
+}
+
+}
+
+
+
+
+
+/* Organize */
+
+.search-nothome-item {
+    padding: 0 0 10px 0px;
+	margin: 10px 0 0px 20px;
+    width: 445px;
+    height: 400px;
+    float: left;
+}
+
+.search-header-item .search-icon-item img {
+	height: 58px;
+}
+
+
+
+
+
+
+
+
+
+
+			
+/* Widget Centro de Noticias (Noticias más valoradas) */
+
+.search-not-item {
+	width: 25%;
+    margin: 20px 0 0 0;
+    padding: 0 15px;
+    float: left;
+    box-sizing: border-box;
+}
+
+@media all and (max-width: 900px) { 
+
+.search-not-item {
+    width: 100% !important;
+}
+
+}
+
+.search-not-item .card {
+	min-height: 260px;
+}
+
+.search-not-item .search-image-item {
+    overflow: hidden;
+}
+
+.search-not-item .search-image-item a {
+	display: block;
+	max-height: 110px;
+}
+
+.search-not-item .search-image-item a img {
+	width: 100%; 
+	height: auto;
+	display: block;
+}
+
+.search-not-item .search-header-item {
+    display: block; 
+	padding: 0 10px;
+}
+
+.search-not-item .search-header-item .search-info-item {
+	margin: 0;
+	padding: 0;
+}
+
+.search-not-item .search-header-item .search-info-item .search-title-item {
+	margin: 10px 0 0 0;
+}
+
+.search-not-item .search-header-item .search-info-item .search-title-item a {
+    font-family: 'Open Sans', sans-serif;
+    color: #003879;
+    font-size: 14px;
+    letter-spacing: 1px;
+    line-height: 1.8;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    overflow: hidden;
+    max-height: 55px;
+}
+
+.search-not-item .search-header-item .search-info-item .search-datecontent-item {
+    font-family: 'Open Sans', sans-serif;
+    color: #003879;
+    font-size: 12px;
+    letter-spacing: 1px;
+    line-height: 2;
+	text-align: center;
+	margin: 5px 0;
+    display: block;
+}
+
+.search-not-item .search-footer-item {
+    text-align: center;
+	margin: 0;
+}
+
+.search-not-item .search-footer-item a {
+	display: inline-block;
+	font-size: 14px;
+}
+
+
+
+
+   
+div#descargar-conectados a {
+    color: salmon;
+}
+
+.search-footer-item .search-description-item {    
+    overflow: hidden;
+    color: #8e8e8e;
+    /*max-height: 60px;*/ /*Simon Botero 24-02-2015*/
+    margin: 0 0 10px 0;
+}
+
+
+
+
+
+/* Home Resource Icons Sections */
+
+
+.section-slider {
+    padding-top: 10px !important;
+}
+
+.section-slider .container {
+    width: 100% !important;
+}
+
+.search-doc-item {
+    width: 23% !important;
+    margin: 50px 10px 0 10px;
+	height: 210px;
+}
+
+@media all and (max-width: 991px) { 
+
+.search-doc-item {
+    width: 100% !important;
+	margin: 50px 0 0 0;
+}
+
+}
+
+@media all and (max-width: 768px) { 
+
+.search-doc-item {
+	height: auto;
+}
+
+}
+
+
+
+.search-doc-item .search-header-item .search-icon-item {
+    float: none;
+    text-align: center;
+	margin: 0;
+}
+
+.search-doc-item .search-header-item .search-info-item .search-title-item {
+    text-align: center;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.search-doc-item .search-header-item .search-info-item .search-title-item a {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #003879;
+    font-size: 14px;
+    letter-spacing: 1px;
+    line-height: 1.8;
+    text-decoration: none;
+    max-height: 100px;
+    display: block;
+}
+
+.search-doc-item .search-header-item .search-info-item .search-datecontent-item {
+    font-family: Arial, Helvetica, sans-serif;
+	color: #0072b9;
+	font-size: 12px;
+	letter-spacing: 1px;
+    line-height: 1.8;
+    text-align: center;
+	margin-top: 5px;
+}
+
+.search-doc-item .search-header-item .search-info-item .search-datecontent-item .search-contenttype-item {
+	text-decoration: none;
+}
+
+.search-doc-item .search-footer-item {
+    height: auto;
+    display: block;
+    text-align: center;
+}
+
+
+
+
+/* Buttons */
+
+.ms-srch-group-content {
+    padding: 0 45px;
+}
+
+@media all and (max-width: 991px) { 
+.ms-srch-group-content {
+    padding: 0;
+}
+}
+
+.ms-srch-result-groups {
+    margin-bottom: 20px !important;
+}
+
+.ms-srch-result #Paging {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 40px 0 0 0;
+}
+
+.ms-srch-result {
+    margin-top: 0;
+}
+
+#PagingImageLink {
+    position: absolute;
+	top: 80px;
+}
+
+#PagingImageLink:first-child {
+    left: 0px;
+}
+
+#PagingImageLink:last-child {
+    right: 0px;
+}
+
+.ms-srch-pagingPrev { display: none;}
+
+.ms-srch-pagingNext { display: none;}
+
+.ms-promlink-button {
+    display: inline-block;
+    width: 40px;
+    height: 60px;
+    border-width: 1px;
+    border-style: solid;
+    padding: 0;
+    border-color: #ababab;
+    background-color: rgba( 255,255,255,0.85 );
+    border: 2px solid;
+}
+
+.ms-promlink-button-image {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+}
+
+#PagingImageLink:first-child .ms-promlink-button-image:after {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f104";
+    font-size: 28px;
+    margin-top: 14px;
+    display: block;
+	margin-right: 5px;
+}
+
+#PagingImageLink:last-child .ms-promlink-button-image:before {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f105";
+    font-size: 28px;
+    margin-top: 14px;
+    display: block;
+}
+
+
+.ms-srch-result #PagingLink {
+    list-style-type: none;
+    display: inline-block !important;
+    font-size: 20px;
+	margin-right: -4px;
+	border-left: 1px solid #d7dadb;
+}
+
+.ms-srch-Paging #PagingLink:nth-last-child(2) {
+	border-right: 1px solid #d7dadb;
+}
+
+.ms-srch-result #PagingLink:last-child {}
+
+.ms-srch-result #PagingLink:hover {}
+
+
+.ms-srch-result #PagingLink a {
+	color: #8b969c;
+	text-decoration: none;
+	display: block;
+    padding: 20px 25px;
+	position: relative;
+	top: 0;
+}
+
+.ms-srch-result #PagingLink:hover a {
+    color: #ccc;
+    background-color: #0033a0;
+}
+
+.ms-srch-result #PagingSelf {   
+	font-size: 20px;
+    display: inline-block !important;
+	margin-right: -4px;
+    list-style-type: none;
+	border-left: 1px solid #d7dadb;
+    position: relative;
+	top: -1px;
+}
+
+.ms-srch-result #PagingSelf a {
+    color: #fff;
+    text-decoration: none;
+    background-color: #0033a0;
+    display: block;
+    padding: 20px 25px;
+}
+
+.ms-srch-result #PagingSelf a:hover {
+    color: #ffffff;
+}
+
+
+
+
+
+.search-footer-item .search-rating-item {
+    height:25px;
+    width: 100%;
+	letter-spacing: 1px;
+}
+
+
+.search-footer-item .search-rating-item span {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-image: url('/_layouts/15/images/RatingsSmallStarEmpty.png');
+}
+
+.search-footer-item .search-rating-item span.full-star {
+	background-image: url('/_layouts/15/images/RatingsSmallStarFilled.png');
+}
+
+.search-footer-item .search-rating-item span.half-star {
+	background-image: url('/_layouts/15/images/RatingsSmallStarLeftHalfFilled.png');
+}
+
+
+
+
+#s4-workspace #s4-bodyContainer #contentRow #contentBox #DeltaPlaceHolderMain #search-div .ms-webpart-zone .s4-wpcell-plain {
+	display: block;
+}
+
+#s4-workspace #s4-bodyContainer #contentRow #contentBox #DeltaPlaceHolderMain #search-div .ms-webpart-zone .s4-wpcell-plain .ms-webpart-chrome-vertical {
+	display: block;
+}

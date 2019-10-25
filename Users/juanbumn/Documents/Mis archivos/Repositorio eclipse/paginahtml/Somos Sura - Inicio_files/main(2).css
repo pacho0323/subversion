@@ -1,0 +1,57 @@
+﻿
+ul.pestanas-menu {
+    padding: 0;
+    background-color: #0063b4;
+    background-image: url(/Style%20Library/Pestanas/images/bg-docs-bottom-blue-tabs.gif);
+    background-repeat: repeat-x;
+    background-position: left top;
+    height: 55px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    margin: 0 0 20px 0;
+}
+
+ul.pestanas-menu li {
+	display: inline-block;
+	zoom: 1;
+	*display: inline;
+	-moz-border-radius: 4px 4px 0 0;
+	-webkit-border-radius: 4px 4px 0 0;
+	border-radius: 4px 4px 0 0;
+    width: 33.33333%;
+}
+
+ul.pestanas-menu li:hover {
+	background-position: center -63px;
+	cursor: hand;
+	cursor: pointer;
+}
+
+ul.pestanas-menu li.activa {
+	position: relative;
+	top: 0px;
+	background-color: #fff;
+	background-image: url(/Style%20Library/Pestanas/images/bg-bottom-docs-tabs.png);
+	background-position: center -126px;
+}
+
+ul.pestanas-menu li a {
+	font-size: 18px;
+	display: block;
+	outline: none;
+	color: #FFF;
+	-webkit-text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+	font-weight: bold;
+	text-align: center;
+	text-decoration: none;
+	background-image: url(/Style%20Library/Pestanas/images/bg-bottom-docs-tabs.png);
+	height: 48px;
+	padding-top: 15px;
+	padding-right: 10px;
+	padding-bottom: 0;
+	padding-left: 10px;
+	background-repeat: no-repeat;
+	background-position: center top;
+}
